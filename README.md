@@ -11,7 +11,7 @@
 - Download or clone the repo:
 
 ```bash
-git clone https://github.com/awran5/react-rating-component.git
+git clone https://github.com/awran5/react-one-minute-speed-typing-test-ts.git
 ```
 
 - Install
@@ -28,7 +28,9 @@ yarn install
 
 - none
 
-### [sandbox](https://codesandbox.io/s/react-simple-star-rating-ts-fzmpu)
+### [sandbox](https://codesandbox.io/s/react-one-minute-speed-typing-test-ts-q82ux)
+
+### [Live Example](https://react-one-minute-speed-typing-test-ts.vercel.app)
 
 ### License
 
