@@ -2,6 +2,7 @@
   "name": "react-one-minute-speed-typing-test-ts",
   "version": "1.0.0",
   "private": true,
+  "license": "MIT",
   "dependencies": {
     "@types/node": "^12.0.0",
     "@types/react": "^16.9.53",
