@@ -12,7 +12,7 @@ function Stats({ title, value, symbol }: Props) {
       <div className='state-title'>{title}</div>
       <div className='state-value'>
         <span className='state-value'>{value}</span>
-        {symbol !== '' && value > 0 && <span>{symbol}</span>}
+        {symbol && <span>{symbol}</span>}
       </div>
     </div>
   )

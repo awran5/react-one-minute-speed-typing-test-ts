@@ -4,14 +4,14 @@ import State from './State'
 interface Props {
   started: boolean
   incorrect: boolean
-  areaRef: React.RefObject<HTMLDivElement> | null | undefined
-  handleKeyDown: (event: React.KeyboardEvent<Element>) => void
+  areaRef: React.RefObject<HTMLDivElement> | null
+  // eslint-disable-next-line no-unused-vars
+  handleKeyDown: (event: React.KeyboardEvent<HTMLDivElement>) => void
   remainingText: string
   completedText: string
   inputText: string
   errorIndex: number
   duration: number
-  tabIndex: number
   handleStart: () => void
 }
 
@@ -25,39 +25,42 @@ function TypingArea({
   inputText = '',
   errorIndex = 0,
   duration = 0,
-  handleStart,
+  handleStart
 }: Props) {
   return (
-    <React.Fragment>
-      <div className='main'>
+    <>
+      <div className='typing-box'>
         <div className='d-flex text-center justify-content-between align-items-center shadow-sm stats'>
           <State
             title='Progress'
-            value={((completedText.length / inputText.length) * 100).toFixed(0) + '%' || '0%'}
+            value={((completedText.length / inputText.length) * 100).toFixed(0)}
             symbol='%'
           />
-          <State title='Errors' value={errorIndex || 0} />
-          <State title='Timer' value={duration + 's' || 0} />
+          <State title='Errors' value={errorIndex} />
+          <State title='Timer' value={`${duration}s`} />
         </div>
         <div
           className={`typing-area${started ? ' active' : ''}${incorrect ? ' is-error' : ''}`}
           ref={areaRef}
           onKeyDown={handleKeyDown}
           tabIndex={0}
+          role='textbox'
         >
-          <span className='cursor'></span>
+          <span className='cursor' />
           <span className='remaining-text'>{remainingText}</span>
         </div>
       </div>
-      <button
-        type='button'
-        className='btn py-3 btn-primary btn-block mt-4'
-        disabled={started}
-        onClick={started ? () => {} : handleStart}
-      >
-        Start
-      </button>
-    </React.Fragment>
+      <div className='d-grid gap-2 mt-4'>
+        <button
+          type='button'
+          className='btn py-3 btn-primary '
+          disabled={started}
+          onClick={started ? () => {} : handleStart}
+        >
+          Start
+        </button>
+      </div>
+    </>
   )
 }
 

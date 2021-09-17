@@ -1,29 +1,14 @@
-import React, { useState, useRef } from 'react'
-import Header from './Components/Header'
+import React, { useRef, useReducer } from 'react'
 import Layout from './Components/Layout'
 import TypingArea from './Components/TypingArea'
 import Result from './Components/Result'
 import { allowedKeys, generateRandomWords } from './helper'
+
 const ErrorBeep = require('./sound/beep.wav')
 
-interface iState {
-  inputText: string
-  remainingText: string
-  completedText: string
-  showStats: boolean
-  progress: number
-  accuracy: number
-  errorIndex: number
-  correctIndex: number
-  wpm: number
-  duration: number
-  incorrect: boolean
-  started: boolean
-}
-
-const initialState: iState = {
-  inputText: 'Welcome, click on the button below to get started!',
-  remainingText: 'Welcome, click on the button below to get started!',
+const initialState = {
+  inputText: 'Welcome, click start to begin the one-minute typing speed test',
+  remainingText: 'Welcome, click start to begin the one-minute typing speed test',
   completedText: '',
   showStats: false,
   progress: 0,
@@ -33,118 +18,158 @@ const initialState: iState = {
   wpm: 0,
   duration: 60,
   incorrect: false,
-  started: false,
+  started: false
+}
+
+type State = typeof initialState
+
+type Action =
+  | { type: 'START' }
+  | { type: 'END' }
+  | { type: 'DURATION'; payload: number }
+  | { type: 'ACCURACY'; payload: number }
+  | { type: 'WPM'; payload: number }
+  | { type: 'CORRECT' }
+  | { type: 'INCORRECT' }
+  | { type: 'RESET' }
+
+const reducer = (state: State, action: Action): State => {
+  const randomWords = generateRandomWords()
+
+  switch (action.type) {
+    case 'START':
+      return {
+        ...state,
+        started: true,
+        showStats: false,
+        inputText: randomWords,
+        remainingText: randomWords
+      }
+    case 'END':
+      return {
+        ...state,
+        started: false,
+        showStats: true,
+        inputText: state.inputText,
+        remainingText: state.remainingText,
+        duration: state.duration
+      }
+    case 'DURATION':
+      return {
+        ...state,
+        duration: action.payload
+      }
+    case 'ACCURACY':
+      return {
+        ...state,
+        accuracy: action.payload
+      }
+    case 'WPM':
+      return {
+        ...state,
+        wpm: action.payload
+      }
+    case 'CORRECT':
+      return {
+        ...state,
+        progress: state.progress + 1,
+        correctIndex: state.correctIndex + 1,
+        remainingText: state.remainingText.slice(1),
+        completedText: state.completedText + state.remainingText.charAt(0),
+        incorrect: false
+      }
+    case 'INCORRECT':
+      return {
+        ...state,
+        incorrect: true,
+        errorIndex: state.errorIndex + 1
+      }
+    case 'RESET':
+      return initialState
+
+    default:
+      return state
+  }
 }
 
 function App() {
-  const [state, setState] = useState<iState>(initialState)
-  const interval: React.MutableRefObject<number | null> = useRef<number | null>(null)
+  const [
+    {
+      inputText,
+      remainingText,
+      completedText,
+      showStats,
+      progress,
+      accuracy,
+      errorIndex,
+      correctIndex,
+      wpm,
+      duration,
+      incorrect,
+      started
+    },
+    dispatch
+  ] = useReducer(reducer, initialState)
+
+  const interval = useRef<number | null>(null)
   const areaRef = useRef<HTMLDivElement | null>(null)
   const errorBeepRef = useRef<HTMLAudioElement | null>(null)
 
   const handleStart = () => {
-    // Word generate
-    const newInputText: string = generateRandomWords()
-    setState((prev) => ({
-      ...prev,
-      inputText: newInputText,
-      remainingText: newInputText,
-      started: true,
-    }))
+    dispatch({ type: 'START' })
+    if (areaRef.current) areaRef.current.focus()
+
     // Timer
-    const now: number = Date.now()
-    const seconds: number = now + 60 * 1000
+    const now = Date.now()
+    const seconds = now + 60 * 1000
 
     interval.current = window.setInterval(() => {
-      const secondLeft: number = Math.round((seconds - Date.now()) / 1000)
+      const secondLeft = Math.round((seconds - Date.now()) / 1000)
       if (secondLeft <= 0) {
-        setState((prev) => ({
-          ...prev,
-          duration: 0,
-          showStats: true,
-        }))
+        dispatch({ type: 'END' })
         if (interval.current) window.clearInterval(interval.current)
       }
-      setState((prev) => ({
-        ...prev,
-        duration: secondLeft,
-      }))
+      dispatch({ type: 'DURATION', payload: secondLeft })
     }, 1000)
-    if (areaRef.current) areaRef.current.focus()
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<Element>) => {
-    if (state.showStats || !state.started || state.duration === 0) return
+    if (showStats || !started || duration === 0) return
 
     e.preventDefault()
     const { key } = e
-    const { progress, errorIndex, correctIndex, inputText } = state
 
     if (allowedKeys.includes(key) && key !== 'Shift') {
       if (key === inputText.charAt(progress)) {
-        setState((prev) => ({
-          ...prev,
-          progress: prev.progress + 1,
-          correctIndex: prev.correctIndex + 1,
-          remainingText: prev.remainingText.slice(1),
-          completedText: prev.completedText + prev.remainingText.charAt(0),
-          incorrect: false,
-        }))
+        dispatch({ type: 'CORRECT' })
       } else {
-        setState((prev) => ({
-          ...prev,
-          incorrect: true,
-          errorIndex: prev.errorIndex + 1,
-        }))
-        // Play error sound
+        dispatch({ type: 'INCORRECT' })
+
+        // error sound
         if (errorBeepRef.current) {
           errorBeepRef.current.currentTime = 0
           errorBeepRef.current.play()
         }
       }
-    }
+      if (progress > 5)
+        dispatch({
+          type: 'ACCURACY',
+          payload: Math.floor(((progress - errorIndex) / progress) * 100)
+        })
 
-    const accuracy: number = Math.floor(((progress - errorIndex) / progress) * 100)
-    const wpm: number = Math.round(correctIndex / 5)
-
-    if (progress > 5) {
-      setState((prev) => ({
-        ...prev,
-        accuracy: accuracy > 0 ? accuracy : 0,
-        wpm,
-      }))
-    }
-    if (progress + 1 === inputText.length || errorIndex >= 50) {
-      setState((prev) => ({
-        ...prev,
-        showStats: true,
-      }))
-      if (interval.current) clearInterval(interval.current)
+      if (progress + 1 === inputText.length || errorIndex >= 50) dispatch({ type: 'END' })
+      // set wpm
+      dispatch({ type: 'WPM', payload: Math.round(correctIndex / 5) })
     }
   }
 
   const handleReload = () => {
-    if (interval.current) window.clearInterval(interval.current)
-    setState(initialState)
+    dispatch({ type: 'RESET' })
     setTimeout(() => handleStart(), 0)
   }
 
-  const {
-    inputText,
-    remainingText,
-    completedText,
-    showStats,
-    accuracy,
-    errorIndex,
-    wpm,
-    duration,
-    started,
-    incorrect,
-  } = state
-
   return (
-    <div className='App'>
-      <Header />
+    <>
       <Layout>
         {showStats ? (
           <Result
@@ -167,13 +192,13 @@ function App() {
             areaRef={areaRef}
             handleKeyDown={handleKeyDown}
             remainingText={remainingText}
-            tabIndex={0}
             handleStart={handleStart}
           />
         )}
       </Layout>
-      <audio src={ErrorBeep.default} ref={errorBeepRef} hidden></audio>
-    </div>
+      {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+      <audio src={ErrorBeep.default} ref={errorBeepRef} hidden />
+    </>
   )
 }
 

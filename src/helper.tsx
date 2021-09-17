@@ -2,7 +2,13 @@ const alphabet: string = 'abcdefghijklmnopqrstuvwxyz'
 const numbers: string = '0123456789'
 const symbols: string = '~!@#$%^&*()_-+={}[]|\\\'"<>:;,./?'
 
-export const allowedKeys: string | string[] = [...alphabet, ...alphabet.toUpperCase(), ...numbers, ...symbols, ' ']
+export const allowedKeys: string | string[] = [
+  ...alphabet,
+  ...alphabet.toUpperCase(),
+  ...numbers,
+  ...symbols,
+  ' '
+]
 
 const words: string[] = [
   'the',
@@ -10,9 +16,7 @@ const words: string[] = [
   'to',
   'and',
   'a',
-  'in',
   'is',
-  'it',
   'you',
   'that',
   'he',
@@ -43,6 +47,7 @@ const words: string[] = [
   'can',
   'out',
   'other',
+  'it',
   'were',
   'all',
   'there',
@@ -72,6 +77,7 @@ const words: string[] = [
   'so',
   'these',
   'her',
+  'in',
   'long',
   'make',
   'thing',
@@ -1004,24 +1010,15 @@ const words: string[] = [
   'quotient',
   'teeth',
   'shell',
-  'neck',
+  'neck'
 ]
 
-export const generateRandomWords = (): string => {
-  let currentIndex: number = words.length
-  let temporaryArray: string[] | string = []
-  let randomIndex: number = 0
-
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex)
-    currentIndex = currentIndex - 1
-
-    // And swap it with the current element.
-    temporaryArray = words[currentIndex]
-    words[currentIndex] = words[randomIndex]
-    words[randomIndex] = temporaryArray
+export const generateRandomWords = () => {
+  for (let i = words.length; i > 0; i -= 1) {
+    const randomIndex = Math.floor(Math.random() * i)
+    const tempArray = words[i]
+    words[i] = words[randomIndex]
+    words[randomIndex] = tempArray
   }
 
   return words.join(' ')

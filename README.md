@@ -24,13 +24,21 @@ npm install
 yarn install
 ```
 
-### Dependencies
+### v2 Changelog 09/17/2021
+
+- Updated: dependencies
+- Added: light/Dark mode
+- Added: eslint airbnb style
+- Modified: Refactor state to useReducer
+- Fixed: Minor bugs
 
 - none
 
-### [sandbox](https://codesandbox.io/s/react-one-minute-speed-typing-test-ts-q82ux)
-
 ### [Live Example](https://react-one-minute-speed-typing-test-ts.vercel.app)
+
+<br />
+
+[![Edit react-one-minute-speed-typing-test-ts](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/react-one-minute-speed-typing-test-ts-q82ux?fontsize=14&hidenavigation=1&theme=dark)
 
 ### License
 
