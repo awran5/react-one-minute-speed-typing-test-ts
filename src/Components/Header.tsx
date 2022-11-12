@@ -1,6 +1,6 @@
 import React, { memo } from 'react'
 
-const DarkIcon = () => {
+function DarkIcon() {
   return (
     <svg
       focusable='false'
@@ -14,7 +14,7 @@ const DarkIcon = () => {
     </svg>
   )
 }
-const LightIcon = () => {
+function LightIcon() {
   return (
     <svg
       focusable='false'
