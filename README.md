@@ -24,6 +24,14 @@ npm install
 yarn install
 ```
 
+### v2.1.0 Changelog 11/15/2022
+
+- Updated: dependencies
+- Added: github icons
+- Added: `CPM` state
+- Modified: Refactor style
+- Fixed: Minor bugs
+
 ### v2 Changelog 09/17/2021
 
 - Updated: dependencies
