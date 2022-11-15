@@ -1,4 +1,4 @@
-import React, { memo, useState, useEffect, Dispatch, SetStateAction } from "react";
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import Footer from "./Footer";
 import Header from "./Header";
 
@@ -28,13 +28,6 @@ interface Props {
   children: JSX.Element;
 }
 
-// const STORAGE_KEY = "wpm-app-darkmode";
-
-// const storedTheme = localStorage.getItem(STORAGE_KEY);
-// const themeMode: boolean = storedTheme
-//   ? JSON.parse(storedTheme)
-//   : localStorage.setItem(STORAGE_KEY, "false");
-
 const defaultMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
 function Layout({ children }: Props) {
@@ -57,4 +50,4 @@ function Layout({ children }: Props) {
   );
 }
 
-export default memo(Layout);
+export default Layout;
