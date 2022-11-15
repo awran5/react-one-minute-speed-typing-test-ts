@@ -1,13 +1,42 @@
+:root {
+  --text-color: rgb(73 73 73 / 35%);
+  --text-color-active: #56595d;
+  --body-color: rgb(33, 37, 41);
+  --bg-color: #fff;
+  --bg-color-secondary: #f9f9f9;
+  --card-bg: #fff;
+}
+
+/* @media (prefers-color-scheme: dark)  */
+[data-theme="dark"] {
+  --text-color: rgb(160 160 160 / 35%);
+  --text-color-active: #878d92;
+  --body-color: #eaeaea;
+  --bg-color: #0b1727;
+  --bg-color-secondary: #1d2736;
+  --card-bg: #121b28;
+}
+
+body {
+  color: var(--body-color);
+  background-color: var(--bg-color);
+}
+
+.card {
+  background-color: var(--card-bg);
+  border-color: rgb(120 120 120 / 18%);
+}
+
 .main {
   padding-top: 10rem;
 }
 
 .typing-area {
-  height: 70px;
-  background-color: #333;
+  height: 85px;
+  background-color: var(--bg-color-secondary);
   font-size: 2rem;
   padding-left: 1rem;
-  line-height: 70px;
+  line-height: 85px;
   letter-spacing: 1px;
   color: #a8a8a8;
   overflow: hidden;
@@ -16,6 +45,7 @@
   position: relative;
   transition: box-shadow 0.1s linear;
   border-radius: 0.25rem;
+  border: 1px solid rgb(120 120 120 / 18%);
 }
 
 .typing-area:focus {
@@ -33,27 +63,23 @@
 }
 
 .remaining-text {
-  color: #bbb;
+  color: var(--text-color);
   display: inline-block;
   white-space: pre;
 }
 
-.bg-white .typing-area {
-  background-color: #f7f9fc;
-}
-
-.bg-white .typing-area .remaining-text {
-  color: #212529;
+.typing-area.active .remaining-text {
+  color: var(--text-color-active);
 }
 
 .typing-area.active .cursor {
   position: relative;
-  top: 53px;
+  top: 63px;
   left: 0;
 }
 
 .typing-area.active .cursor::before {
-  content: ' ';
+  content: " ";
   position: absolute;
   font-style: normal;
   height: 3px;
@@ -90,62 +116,8 @@
   }
 }
 
-.stats {
-  margin-bottom: 2rem;
-  background: #f7f9fc;
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
-}
-
-.bg-dark .stats {
-  background: #293042;
-}
-
-.stats .state-title {
-  font-size: 1rem;
-  margin-top: 0.25rem;
-  color: #9c9c9c;
-}
-
-.stats .state-value {
-  color: #0d6efd;
-}
-
-.result .state {
-  background-color: #fff;
-}
-
-.result .state-title {
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #6c757d;
-}
-
-.result .state-value {
-  font-weight: 500;
-  font-size: 2rem;
-  color: #198754;
-}
-
-.speed-meter {
-  margin-top: 4rem;
-}
-
-.speed-meter hr {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  border-width: 1px 0 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  box-sizing: content-box;
-  height: 0;
-  overflow: visible;
-}
-
-.speed-meter .title {
-  font-weight: 300;
-  color: #ffffff;
-  margin: 1rem 0;
+hr {
+  border-color: rgb(118 118 118 / 64%);
 }
 
 .speed-meter .meter-gauge > span {
@@ -186,4 +158,9 @@
 
 .bg-dark .result-into {
   color: rgb(248, 249, 250);
+}
+
+.h5,
+h5 {
+  font-size: 0.75rem;
 }
