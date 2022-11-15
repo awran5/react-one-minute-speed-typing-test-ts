@@ -1,38 +1,60 @@
-import React, { memo, useState, useEffect } from 'react'
-import Header from './Header'
+import React, { memo, useState, useEffect, Dispatch, SetStateAction } from "react";
+import Footer from "./Footer";
+import Header from "./Header";
 
-interface Props {
-  children: JSX.Element
-}
+type SetValue<T> = Dispatch<SetStateAction<T>>;
 
-const STORAGE_KEY = 'wpm-app-darkmode'
+function useLocalStorage<T>(key: string, initialValue: T): [T, SetValue<T>] {
+  const [value, setValue] = useState(() => {
+    let currentValue;
 
-const storedTheme = localStorage.getItem(STORAGE_KEY)
-const themeMode: boolean = storedTheme
-  ? JSON.parse(storedTheme)
-  : localStorage.setItem(STORAGE_KEY, 'false')
+    try {
+      currentValue = JSON.parse(localStorage.getItem(key) || String(initialValue));
+    } catch (error) {
+      currentValue = initialValue;
+    }
 
-function Layout({ children }: Props) {
-  const [darkMode, setDarkMode] = useState(themeMode)
-
-  const handleThemeMode = () => {
-    setDarkMode((prev) => !prev)
-  }
+    return currentValue;
+  });
 
   useEffect(() => {
-    if (storedTheme) localStorage.setItem(STORAGE_KEY, JSON.stringify(darkMode))
-  }, [darkMode])
+    localStorage.setItem(key, JSON.stringify(value));
+  }, [value, key]);
 
-  return (
-    <div className={`App vh-100 ${darkMode ? 'bg-dark' : 'bg-white'}`}>
-      <Header handleThemeMode={handleThemeMode} darkMode={darkMode} />
-      <div className='container main'>
-        <div className='row g-5'>
-          <div className='col-12'>{children}</div>
-        </div>
-      </div>
-    </div>
-  )
+  return [value, setValue];
 }
 
-export default memo(Layout)
+interface Props {
+  children: JSX.Element;
+}
+
+// const STORAGE_KEY = "wpm-app-darkmode";
+
+// const storedTheme = localStorage.getItem(STORAGE_KEY);
+// const themeMode: boolean = storedTheme
+//   ? JSON.parse(storedTheme)
+//   : localStorage.setItem(STORAGE_KEY, "false");
+
+const defaultMode = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+function Layout({ children }: Props) {
+  const [theme, setTheme] = useLocalStorage("wpm-app-darkmode", defaultMode ? "dark" : "light");
+
+  const handleThemeMode = () => setTheme((prev) => (prev === "light" ? "dark" : "light"));
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
+  return (
+    <div className='d-flex flex-column vh-100'>
+      <Header handleThemeMode={handleThemeMode} theme={theme} />
+      <main className='flex-shrink-0 main'>
+        <div className='container'>{children}</div>
+      </main>
+      <Footer theme={theme} />
+    </div>
+  );
+}
+
+export default memo(Layout);
