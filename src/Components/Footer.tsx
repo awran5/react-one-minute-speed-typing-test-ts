@@ -1,10 +1,10 @@
-import React from "react";
+import React, { memo } from "react";
 
 type Props = {
   theme: string;
 };
 
-export default function Footer({ theme }: Props) {
+function Footer({ theme }: Props) {
   return (
     <footer className={`text-center mt-auto ${theme === "dark" ? "bg-dark" : "bg-light"}`}>
       <div className='container'>
@@ -41,7 +41,7 @@ export default function Footer({ theme }: Props) {
               data-color-scheme='no-preference: light; light: light; dark: dark;'
               aria-label='Follow @awran5 on GitHub'
             >
-              Follow @awran5
+              Follow
             </a>
           </li>
         </ul>
@@ -49,3 +49,5 @@ export default function Footer({ theme }: Props) {
     </footer>
   );
 }
+
+export default memo(Footer);
